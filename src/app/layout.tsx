@@ -1,0 +1,51 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono, Luckiest_Guy } from "next/font/google";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const luckiestGuy = Luckiest_Guy({
+  variable: "--font-luckiest-guy",
+  weight: "400",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Shuttlers - Badminton Tournament Hub",
+  description: "Find, register, and compete in badminton tournaments. The frictionless ecosystem for players and organizers.",
+  openGraph: {
+    title: "Summer Smash 2026 | Shuttlers Badminton Tournament",
+    description: "Register now for the ultimate badminton showdown! Multiple categories, great prizes, and seamless experience.",
+    url: "https://shuttlers-tournament.vercel.app",
+    siteName: "Shuttlers Hub",
+    images: [
+      {
+        url: "/banner.jpg.jpeg", // Must be an absolute URL for production, but Next.js resolves absolute paths for local files automatically
+        width: 1200,
+        height: 630,
+        alt: "Tournament Banner",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${luckiestGuy.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">{children}</body>
+    </html>
+  );
+}
