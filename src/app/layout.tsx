@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "Shuttlers Hub",
     images: [
       {
-        url: "/banner.jpg.jpeg", // Must be an absolute URL for production, but Next.js resolves absolute paths for local files automatically
+        url: "https://shuttlers-tournament-website-pi.vercel.app/logo_files/55e0e4b73d7f5850f01115d0ff377b42.jpg",
         width: 1200,
         height: 630,
         alt: "Tournament Banner",
