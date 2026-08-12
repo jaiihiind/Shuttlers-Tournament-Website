@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, MapPin, Mail, ExternalLink, Phone, X, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Mail, ExternalLink, Phone, X, AlertCircle, CheckCircle, Loader2, Calendar } from 'lucide-react';
 import Grainient from '@/components/Grainient';
 import { createClient } from '@/lib/supabase/client';
 

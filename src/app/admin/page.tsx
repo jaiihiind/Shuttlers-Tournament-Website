@@ -207,10 +207,10 @@ export default function AdminDashboard() {
   const filteredRegs = registrations.filter(reg => {
     const term = searchTerm.toLowerCase();
     const nameMatch = reg.profiles?.full_name?.toLowerCase().includes(term);
-    const emailMatch = reg.profiles?.email?.toLowerCase().includes(term);
+    const phoneMatch = reg.profiles?.phone?.toLowerCase().includes(term);
     const categoryMatch = reg.category.toLowerCase().includes(term);
     const partnerMatch = reg.partner_name?.toLowerCase().includes(term);
-    return nameMatch || emailMatch || categoryMatch || partnerMatch;
+    return nameMatch || phoneMatch || categoryMatch || partnerMatch;
   });
 
   return (
