@@ -99,6 +99,7 @@ function BannerCarousel() {
 export default function TournamentPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
   const [activeTab, setActiveTab] = useState('Overview');
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const cacheBuster = React.useRef(Date.now()).current;
   
   // Registration Modal State
   const router = useRouter();
@@ -506,7 +507,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                         onClick={() => setFixtureLightboxOpen(true)}
                       >
                         <img
-                          src={`/fixtures/${selectedFixtureCategory}.png`}
+                          src={`/fixtures/${selectedFixtureCategory}.png?v=${cacheBuster}`}
                           alt={`Fixture - ${fixtureCategories.find(c => c.slug === selectedFixtureCategory)?.label}`}
                           className="w-full h-auto object-contain"
                           onError={(e) => {
@@ -574,7 +575,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
                   </button>
                 </div>
                 <img
-                  src={`/fixtures/${selectedFixtureCategory}.png`}
+                  src={`/fixtures/${selectedFixtureCategory}.png?v=${cacheBuster}`}
                   alt={`Fixture - ${fixtureCategories.find(c => c.slug === selectedFixtureCategory)?.label}`}
                   className="w-auto h-auto max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border-4 border-white/10"
                   onClick={(e) => e.stopPropagation()}
