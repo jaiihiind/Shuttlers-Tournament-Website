@@ -130,62 +130,62 @@ export default function LandingPage() {
               <img src="/logo1.jpg" alt="Shuttlers Logo" className="h-full w-full object-cover" />
             </div>
 
-            {/* Links & Socials */}
-            <div className="hidden md:flex items-center gap-6 text-white font-semibold text-sm">
+            {/* Tagline (Visible on all screens) */}
+            <div className="flex items-center border-l border-white/20 pl-3 md:pl-6 overflow-hidden">
+              <style>{`
+                @keyframes highlight-1 {
+                  0%, 100% { opacity: 1; color: #34d399; transform: scale(1); text-shadow: 0 0 10px rgba(0,0,0,0.9); }
+                  10%, 30% { opacity: 1; color: #10b981; text-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.5); transform: scale(1.15); }
+                }
+                @keyframes highlight-2 {
+                  0%, 100% { opacity: 1; color: #60a5fa; transform: scale(1); text-shadow: 0 0 10px rgba(0,0,0,0.9); }
+                  10%, 30% { opacity: 1; color: #3b82f6; text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 40px rgba(59, 130, 246, 0.5); transform: scale(1.15); }
+                }
+                @keyframes highlight-3 {
+                  0%, 100% { opacity: 1; color: #fbbf24; transform: scale(1); text-shadow: 0 0 10px rgba(0,0,0,0.9); }
+                  10%, 30% { opacity: 1; color: #f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.8), 0 0 40px rgba(245, 158, 11, 0.5); transform: scale(1.15); }
+                }
+                @keyframes highlight-4 {
+                  0%, 100% { opacity: 1; color: #fb7185; transform: scale(1); text-shadow: 0 0 10px rgba(0,0,0,0.9); }
+                  10%, 30% { opacity: 1; color: #f43f5e; text-shadow: 0 0 20px rgba(244, 63, 94, 0.8), 0 0 40px rgba(244, 63, 94, 0.5); transform: scale(1.15); }
+                }
+                @keyframes jump-across {
+                  0%, 100% { opacity: 0; transform: translate(-10px, 5px) rotate(-30deg); }
+                  4% { opacity: 1; transform: translate(-5px, -10px) rotate(0deg); color: #ffffff; filter: drop-shadow(0 0 10px rgba(255,255,255,0.9)); }
+                  16% { opacity: 1; transform: translate(5px, -10px) rotate(45deg); color: #ffffff; filter: drop-shadow(0 0 10px rgba(255,255,255,0.9)); }
+                  20% { opacity: 0; transform: translate(10px, 5px) rotate(70deg); }
+                }
+                .animate-word { display: inline-block; }
+                .word-1 { animation: highlight-1 4s infinite 0s; color: #34d399; }
+                .word-2 { animation: highlight-2 4s infinite 1s; color: #60a5fa; }
+                .word-3 { animation: highlight-3 4s infinite 2s; color: #fbbf24; }
+                .word-4 { animation: highlight-4 4s infinite 3s; color: #fb7185; }
+                .animate-shuttle-1 { animation: jump-across 4s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.6s; opacity: 0; }
+                .animate-shuttle-2 { animation: jump-across 4s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.6s; opacity: 0; }
+                .animate-shuttle-3 { animation: jump-across 4s cubic-bezier(0.4, 0, 0.2, 1) infinite 2.6s; opacity: 0; }
+              `}</style>
+              <p 
+                className="text-[8px] sm:text-[10.5px] md:text-xs font-extrabold uppercase tracking-widest flex items-center gap-1 md:gap-1.5 whitespace-nowrap"
+                style={{ 
+                  textShadow: '0 0 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.9)',
+                  WebkitTextStroke: '0.5px rgba(255,255,255,0.2)'
+                }}
+              >
+                <span className="animate-word word-1">play</span>
+                <Shuttlecock className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-400/80 animate-shuttle-1 drop-shadow-md" />
+                <span className="animate-word word-2">learn</span>
+                <Shuttlecock className="w-2.5 h-2.5 md:w-3 md:h-3 text-blue-400/80 animate-shuttle-2 drop-shadow-md" />
+                <span className="animate-word word-3">earn</span>
+                <Shuttlecock className="w-2.5 h-2.5 md:w-3 md:h-3 text-amber-400/80 animate-shuttle-3 drop-shadow-md" />
+                <span className="animate-word word-4">repeat....</span>
+              </p>
+            </div>
+
+            {/* Links & Socials (Desktop Only) */}
+            <div className="hidden md:flex items-center gap-6 text-white font-semibold text-sm border-l border-white/20 pl-6">
               <Link href="/" className="hover:text-blue-300 transition-colors">Home</Link>
               <a href="#" className="hover:text-blue-300 transition-colors">Sponsors</a>
               <ContactModalButton />
-              
-              {/* Divider and Tagline */}
-              <div className="flex items-center ml-2 border-l border-white/20 pl-6">
-                <style>{`
-                  @keyframes highlight-1 {
-                    0%, 100% { opacity: 1; color: #34d399; transform: scale(1); text-shadow: 0 0 10px rgba(0,0,0,0.9); }
-                    10%, 30% { opacity: 1; color: #10b981; text-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.5); transform: scale(1.15); }
-                  }
-                  @keyframes highlight-2 {
-                    0%, 100% { opacity: 1; color: #60a5fa; transform: scale(1); text-shadow: 0 0 10px rgba(0,0,0,0.9); }
-                    10%, 30% { opacity: 1; color: #3b82f6; text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 40px rgba(59, 130, 246, 0.5); transform: scale(1.15); }
-                  }
-                  @keyframes highlight-3 {
-                    0%, 100% { opacity: 1; color: #fbbf24; transform: scale(1); text-shadow: 0 0 10px rgba(0,0,0,0.9); }
-                    10%, 30% { opacity: 1; color: #f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.8), 0 0 40px rgba(245, 158, 11, 0.5); transform: scale(1.15); }
-                  }
-                  @keyframes highlight-4 {
-                    0%, 100% { opacity: 1; color: #fb7185; transform: scale(1); text-shadow: 0 0 10px rgba(0,0,0,0.9); }
-                    10%, 30% { opacity: 1; color: #f43f5e; text-shadow: 0 0 20px rgba(244, 63, 94, 0.8), 0 0 40px rgba(244, 63, 94, 0.5); transform: scale(1.15); }
-                  }
-                  @keyframes jump-across {
-                    0%, 100% { opacity: 0; transform: translate(-10px, 5px) rotate(-30deg); }
-                    4% { opacity: 1; transform: translate(-5px, -10px) rotate(0deg); color: #ffffff; filter: drop-shadow(0 0 10px rgba(255,255,255,0.9)); }
-                    16% { opacity: 1; transform: translate(5px, -10px) rotate(45deg); color: #ffffff; filter: drop-shadow(0 0 10px rgba(255,255,255,0.9)); }
-                    20% { opacity: 0; transform: translate(10px, 5px) rotate(70deg); }
-                  }
-                  .animate-word { display: inline-block; }
-                  .word-1 { animation: highlight-1 4s infinite 0s; color: #34d399; }
-                  .word-2 { animation: highlight-2 4s infinite 1s; color: #60a5fa; }
-                  .word-3 { animation: highlight-3 4s infinite 2s; color: #fbbf24; }
-                  .word-4 { animation: highlight-4 4s infinite 3s; color: #fb7185; }
-                  .animate-shuttle-1 { animation: jump-across 4s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.6s; opacity: 0; }
-                  .animate-shuttle-2 { animation: jump-across 4s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.6s; opacity: 0; }
-                  .animate-shuttle-3 { animation: jump-across 4s cubic-bezier(0.4, 0, 0.2, 1) infinite 2.6s; opacity: 0; }
-                `}</style>
-                <p 
-                  className="text-[10.5px] sm:text-xs font-extrabold uppercase tracking-[0.1em] flex items-center gap-1.5"
-                  style={{ 
-                    textShadow: '0 0 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.9)',
-                    WebkitTextStroke: '0.5px rgba(255,255,255,0.2)'
-                  }}
-                >
-                  <span className="animate-word word-1">play</span>
-                  <Shuttlecock className="w-3 h-3 text-emerald-400/80 animate-shuttle-1 drop-shadow-md" />
-                  <span className="animate-word word-2">learn</span>
-                  <Shuttlecock className="w-3 h-3 text-blue-400/80 animate-shuttle-2 drop-shadow-md" />
-                  <span className="animate-word word-3">earn</span>
-                  <Shuttlecock className="w-3 h-3 text-amber-400/80 animate-shuttle-3 drop-shadow-md" />
-                  <span className="animate-word word-4">repeat....</span>
-                </p>
-              </div>
             </div>
           </div>
 
