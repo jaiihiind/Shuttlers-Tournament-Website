@@ -211,7 +211,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-4">
             <Link href="/tournament/summer-smash-2026" className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95">
               <Trophy size={20} />
-              Find a Tournament
+              Tournaments
             </Link>
             <Link href="/organize" className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 shadow-lg text-white font-bold py-4 px-8 rounded-full transition-transform hover:scale-105 active:scale-95">
               <Users size={20} />
