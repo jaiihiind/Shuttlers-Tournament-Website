@@ -54,15 +54,20 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, date, location, prize,
           <div className="w-full h-full p-7 flex flex-col justify-between relative">
           {/* Coming Soon Overlay */}
           {comingSoon && (
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-[36px]">
+            <div className="absolute inset-0 bg-black/65 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-[36px] p-6 text-center">
               <motion.div
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                animate={{ scale: [1, 1.03, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity }}
                 className="flex flex-col items-center"
               >
-                <span className="text-3xl mb-2">🔒</span>
-                <span className="text-xl font-black text-white/70 tracking-widest uppercase">Coming Soon</span>
-                <span className="text-sm text-white/50 mt-1">Stay tuned for updates!</span>
+                <span className="text-3xl mb-3">🔒</span>
+                <span className="text-lg md:text-xl font-black text-white tracking-wide uppercase mb-2 leading-snug drop-shadow-md">
+                  {title}
+                </span>
+                <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[11px] font-black px-3.5 py-1 rounded-full uppercase tracking-widest shadow-md">
+                  Coming Soon
+                </span>
+                <span className="text-xs text-slate-400 mt-3 font-medium">Stay tuned for updates!</span>
               </motion.div>
             </div>
           )}
@@ -141,7 +146,7 @@ export default function FeaturesSection() {
       live: true
     },
     {
-      title: "City Open Championship",
+      title: "Shuttlers Badminton Tournament 2.0",
       date: "Coming Soon",
       location: "TBA",
       prize: "TBA",

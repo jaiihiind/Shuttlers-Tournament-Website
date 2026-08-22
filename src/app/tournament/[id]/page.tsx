@@ -3,9 +3,98 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, MapPin, Mail, ExternalLink, Phone, X, AlertCircle, CheckCircle, Loader2, Calendar } from 'lucide-react';
+import { ArrowLeft, MapPin, Mail, ExternalLink, Phone, X, AlertCircle, CheckCircle, Loader2, Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import Grainient from '@/components/Grainient';
 import { createClient } from '@/lib/supabase/client';
+
+function BannerCarousel() {
+  const slides = [
+    { id: 'chief-guest', src: '/sponsors/chief-guest.jpg', title: 'Chief Guest - Sardar Gurdarshan Singh Saini' },
+    { id: 'delux-sports', src: '/sponsors/delux-sports.jpg', title: 'Delux Sports - Premier Badminton Hub' },
+    { id: 'sani-dhaba', src: '/sponsors/sani-dhaba.jpg', title: 'Sani Dhaba - Food Partner' },
+    { id: 'prize-pool', src: '/prize-pool.jpg', title: 'Prize Pool Up To ₹70,000' },
+    { id: 'banner', src: '/banner.jpg.jpeg', title: 'Shuttlers Badminton Tournament 2026' },
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  React.useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [isPaused, slides.length]);
+
+  const goToPrev = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+  };
+
+  return (
+    <div 
+      className="relative w-full rounded-2xl overflow-hidden shadow-xl border-2 border-gray-100 mb-6 group bg-gray-950"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Sliding Track */}
+      <div 
+        className="flex transition-transform duration-700 ease-in-out"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
+        {slides.map((slide) => (
+          <div key={slide.id} className="w-full shrink-0 relative flex items-center justify-center bg-gray-950 min-h-[240px] max-h-[460px]">
+            <img 
+              src={slide.src} 
+              alt={slide.title} 
+              className="w-full h-auto max-h-[460px] object-contain mx-auto" 
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Slide Title Badge */}
+      <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-full border border-white/20 tracking-wide uppercase pointer-events-none z-10">
+        {slides[currentIndex].title}
+      </div>
+
+      {/* Controls */}
+      <button
+        onClick={goToPrev}
+        className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg border border-white/20 z-10"
+        aria-label="Previous Slide"
+      >
+        <ChevronLeft size={20} />
+      </button>
+
+      <button
+        onClick={goToNext}
+        className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg border border-white/20 z-10"
+        aria-label="Next Slide"
+      >
+        <ChevronRight size={20} />
+      </button>
+
+      {/* Dots Indicator */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/50 px-3.5 py-1.5 rounded-full backdrop-blur-md border border-white/10 z-10">
+        {slides.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              idx === currentIndex ? 'w-6 bg-blue-500 shadow-sm shadow-blue-500/50' : 'w-2 bg-white/50 hover:bg-white'
+            }`}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function TournamentPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
   const [activeTab, setActiveTab] = useState('Overview');
@@ -30,6 +119,43 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [registrationId, setRegistrationId] = useState<string | null>(null);
   const [drawsUrl, setDrawsUrl] = useState<string | null>(null);
+  const [selectedFixtureCategory, setSelectedFixtureCategory] = useState('');
+  const [fixtureLightboxOpen, setFixtureLightboxOpen] = useState(false);
+  const [reportingLightboxOpen, setReportingLightboxOpen] = useState(false);
+
+  const fixtureCategories = [
+    { label: '100+ Mens Doubles', slug: '100-mens-doubles' },
+    { label: '120+ Mens Doubles', slug: '120-mens-doubles' },
+    { label: '130+ Mens Doubles', slug: '130-mens-doubles' },
+    { label: '30+ Mens Singles', slug: '30-mens-singles' },
+    { label: '40+ Mens Singles', slug: '40-mens-singles' },
+    { label: '50+ Mens Singles', slug: '50-mens-singles' },
+    { label: '70+ Mens Doubles', slug: '70-mens-doubles' },
+    { label: '80+ Mens Doubles', slug: '80-mens-doubles' },
+    { label: '90+ Mens Doubles', slug: '90-mens-doubles' },
+    { label: 'Open Mens Doubles', slug: 'open-mens-doubles' },
+    { label: 'Open Mens Singles', slug: 'open-mens-singles' },
+    { label: 'Open Mix Doubles', slug: 'open-mix-doubles' },
+    { label: 'Open Women Singles', slug: 'open-women-singles' },
+    { label: 'U-11 Boys Doubles', slug: 'u11-boys-doubles' },
+    { label: 'U-11 Boys Singles', slug: 'u11-boys-singles' },
+    { label: 'U-11 Girls Singles', slug: 'u11-girls-singles' },
+    { label: 'U-13 Boys Doubles', slug: 'u13-boys-doubles' },
+    { label: 'U-13 Boys Singles', slug: 'u13-boys-singles' },
+    { label: 'U-13 Girls Singles', slug: 'u13-girls-singles' },
+    { label: 'U-15 Boys Doubles', slug: 'u15-boys-doubles' },
+    { label: 'U-15 Boys Singles', slug: 'u15-boys-singles' },
+    { label: 'U-15 Girls Doubles', slug: 'u15-girls-doubles' },
+    { label: 'U-15 Girls Singles', slug: 'u15-girls-singles' },
+    { label: 'U-15 Mix Doubles', slug: 'u15-mix-doubles' },
+    { label: 'U-17 Boys Doubles', slug: 'u17-boys-doubles' },
+    { label: 'U-17 Boys Singles', slug: 'u17-boys-singles' },
+    { label: 'U-17 Girls Singles', slug: 'u17-girls-singles' },
+    { label: 'U-19 Boys Doubles', slug: 'u19-boys-doubles' },
+    { label: 'U-19 Boys Singles', slug: 'u19-boys-singles' },
+    { label: 'U-19 Girls Doubles', slug: 'u19-girls-doubles' },
+    { label: 'U-19 Girls Singles', slug: 'u19-girls-singles' },
+  ];
 
   const categories = [
     "U - 11", "U - 13", "U - 15", "U - 15 XD", "U - 17", "U - 19",
@@ -57,7 +183,7 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
     fetchTournament();
   }, [tournamentId]);
 
-  const tabs = ["Overview", "Matches", "Social"];
+  const tabs = ["Overview", "Matches", "Sponsors", "Social"];
 
   const handleRegisterClick = async () => {
     const supabase = createClient();
@@ -217,10 +343,8 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
           {activeTab === 'Overview' && (
             <div className="p-5 md:p-6 bg-white rounded-3xl shadow-sm border border-gray-100 mt-2">
               
-              {/* Banner with border inside the Overview */}
-              <div className="w-full h-auto rounded-2xl border-4 border-gray-100 shadow-sm overflow-hidden mb-6">
-                <img src="/banner.jpg.jpeg" alt="Tournament Banner" className="w-full h-auto object-contain" />
-              </div>
+              {/* Automated Sideways Transition Banner Carousel */}
+              <BannerCarousel />
 
               <h2 className="text-2xl font-bold mb-5 text-gray-900 flex items-center gap-3">
                 <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Info</span>
@@ -328,122 +452,322 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
             </div>
           )}
           
-          {activeTab === 'Social' && (
-            <div className="p-6 md:p-8 bg-white rounded-3xl shadow-sm border border-gray-100 mt-2">
-              <h2 className="text-2xl font-bold mb-6 text-gray-900 border-b pb-3 flex items-center gap-3">
-                <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Gallery</span>
-                Tournament Maps
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {[1, 2, 3, 4].map((num) => (
-                  <div 
-                    key={num} 
-                    onClick={() => setSelectedImage(num)}
-                    className="group relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 bg-white border-[6px] border-white aspect-[4/3] cursor-pointer"
-                  >
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121845]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex items-end p-6">
-                      <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex items-center gap-2">
-                        <div className="bg-blue-500 p-2 rounded-full">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        </div>
-                        <span className="text-white font-bold tracking-wide">
-                          Click to Expand Map {num}
-                        </span>
+          {/* Note: Venue maps moved to Social tab section */}
+
+          {activeTab === 'Matches' && (
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 mt-2 overflow-hidden">
+              <div className="p-5 md:p-6">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Draws</span>
+                  <h2 className="text-xl font-bold text-gray-900">Match Fixtures</h2>
+                </div>
+
+                {/* Category Dropdown */}
+                <div className="relative mb-5">
+                  <label className="text-xs font-extrabold tracking-wider text-gray-500 uppercase mb-2 block">Select Category</label>
+                  <div className="relative">
+                    <select
+                      value={selectedFixtureCategory}
+                      onChange={(e) => setSelectedFixtureCategory(e.target.value)}
+                      className="w-full bg-gray-50 border-2 border-gray-200 rounded-2xl px-5 py-4 text-gray-900 font-bold text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer hover:border-blue-300 hover:bg-blue-50/30"
+                    >
+                      <option value="">— Choose a category to view draws —</option>
+                      {fixtureCategories.map(cat => (
+                        <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fixture Image Display */}
+                {selectedFixtureCategory ? (
+                  <div className="relative group">
+                    <div className="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                      {/* Category title bar */}
+                      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 flex justify-between items-center">
+                        <h3 className="text-white font-bold text-sm tracking-wide uppercase">
+                          {fixtureCategories.find(c => c.slug === selectedFixtureCategory)?.label}
+                        </h3>
+                        <button
+                          onClick={() => setFixtureLightboxOpen(true)}
+                          className="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                          Expand
+                        </button>
+                      </div>
+                      {/* Image */}
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => setFixtureLightboxOpen(true)}
+                      >
+                        <img
+                          src={`/fixtures/${selectedFixtureCategory}.png`}
+                          alt={`Fixture - ${fixtureCategories.find(c => c.slug === selectedFixtureCategory)?.label}`}
+                          className="w-full h-auto object-contain"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent && !parent.querySelector('.fixture-error')) {
+                              const errorDiv = document.createElement('div');
+                              errorDiv.className = 'fixture-error flex flex-col items-center justify-center py-16 text-center';
+                              errorDiv.innerHTML = `
+                                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                </div>
+                                <h4 class="text-lg font-bold text-gray-800 mb-1">Fixture Coming Soon</h4>
+                                <p class="text-gray-500 text-sm max-w-xs">The draw for this category hasn't been uploaded yet. Check back soon!</p>
+                              `;
+                              parent.appendChild(errorDiv);
+                            }
+                          }}
+                        />
                       </div>
                     </div>
-                    {/* Image */}
-                    <img 
-                      src={`/map%20pics/map%20${num}.png`} 
-                      alt={`Tournament Map ${num}`} 
-                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-in-out" 
-                    />
                   </div>
-                ))}
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center bg-gradient-to-b from-blue-50/50 to-white rounded-2xl border-2 border-dashed border-blue-200">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                      <Calendar className="w-8 h-8 text-blue-500" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-800 mb-1">Select a Category</h3>
+                    <p className="text-gray-500 text-sm max-w-xs">
+                      Choose a category from the dropdown above to view the match fixtures and brackets.
+                    </p>
+                  </div>
+                )}
+
+                {/* Category count badge */}
+                <div className="mt-4 flex justify-center">
+                  <span className="text-xs font-bold text-gray-400 bg-gray-100 px-4 py-1.5 rounded-full">
+                    {fixtureCategories.length} categories available
+                  </span>
+                </div>
               </div>
             </div>
           )}
 
-          {activeTab === 'Matches' && (
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 mt-2 overflow-hidden flex flex-col items-center">
-              {drawsUrl ? (
-                drawsUrl.toLowerCase().endsWith('.pdf') ? (
-                  <div className="w-full h-[600px] md:h-[800px] flex flex-col">
-                    <div className="bg-blue-50 p-4 border-b border-blue-100 flex justify-between items-center">
-                      <h3 className="font-bold text-blue-900">Tournament Draws (PDF)</h3>
-                      <a href={drawsUrl} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm hover:bg-blue-700 transition-colors">
-                        Open PDF
-                      </a>
-                    </div>
-                    <iframe src={drawsUrl} className="w-full h-full border-0" title="Tournament Draws" />
-                  </div>
-                ) : (
-                  <div className="w-full p-4 md:p-6 bg-gray-50 flex flex-col items-center">
-                    <div className="w-full flex justify-between items-center mb-4">
-                      <h3 className="font-bold text-gray-800">Tournament Draws</h3>
-                      <a href={drawsUrl} target="_blank" rel="noopener noreferrer" className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm shadow-sm hover:bg-gray-50 transition-colors">
-                        View Full Screen
-                      </a>
-                    </div>
-                    <img src={drawsUrl} alt="Tournament Draws" className="w-full h-auto object-contain rounded-xl border border-gray-200 shadow-md" />
-                  </div>
-                )
-              ) : (
-                <div className="p-12 w-full flex flex-col items-center justify-center text-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <Calendar className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Draws Not Available Yet</h3>
-                  <p className="text-gray-500 max-w-sm">
-                    The tournament organizer hasn't uploaded the match fixtures or brackets yet. Check back closer to the tournament date!
-                  </p>
+          {/* Fixture Lightbox */}
+          {fixtureLightboxOpen && selectedFixtureCategory && (
+            <div
+              className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md"
+              onClick={() => setFixtureLightboxOpen(false)}
+            >
+              <div className="relative w-full max-w-5xl max-h-[90vh] flex flex-col items-center justify-center animate-in fade-in zoom-in duration-300">
+                <div className="absolute -top-12 right-0 md:-right-2 flex items-center gap-3 z-10">
+                  <span className="text-white/70 text-sm font-bold hidden md:block">
+                    {fixtureCategories.find(c => c.slug === selectedFixtureCategory)?.label}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFixtureLightboxOpen(false);
+                    }}
+                    className="text-white hover:text-gray-300 transition-colors bg-white/10 hover:bg-white/20 p-2 rounded-full"
+                  >
+                    <X size={28} />
+                  </button>
                 </div>
-              )}
+                <img
+                  src={`/fixtures/${selectedFixtureCategory}.png`}
+                  alt={`Fixture - ${fixtureCategories.find(c => c.slug === selectedFixtureCategory)?.label}`}
+                  className="w-auto h-auto max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border-4 border-white/10"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
             </div>
           )}
 
-          {activeTab === 'Social' && (
+          {/* Reporting Time Lightbox */}
+          {reportingLightboxOpen && (
+            <div
+              className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md"
+              onClick={() => setReportingLightboxOpen(false)}
+            >
+              <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col items-center justify-center animate-in fade-in zoom-in duration-300">
+                <div className="absolute -top-12 right-0 md:-right-2 flex items-center gap-3 z-10">
+                  <span className="text-white/70 text-sm font-bold hidden md:block uppercase tracking-wider">
+                    Reporting Time Schedule (23 August)
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setReportingLightboxOpen(false);
+                    }}
+                    className="text-white hover:text-gray-300 transition-colors bg-white/10 hover:bg-white/20 p-2 rounded-full"
+                  >
+                    <X size={28} />
+                  </button>
+                </div>
+                <img
+                  src="/reporting-time.jpg"
+                  alt="Reporting Time Schedule (23 August)"
+                  className="w-auto h-auto max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border-4 border-white/10"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Sponsors Tab Content */}
+          {activeTab === 'Sponsors' && (
             <div className="flex flex-col gap-6 mt-2">
-              {/* Sponsors Section */}
+              {/* Official Sponsors Section */}
               <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
-                <h2 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight flex items-center gap-2">
-                  <span className="text-yellow-500">🏆</span> Official Sponsors
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <div className="aspect-video bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center p-4 hover:shadow-md transition-shadow">
-                    <p className="font-bold text-gray-400">Sponsor 1</p>
+                <div className="flex items-center justify-between mb-6 border-b pb-4">
+                  <div>
+                    <span className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Partners</span>
+                    <h2 className="text-2xl font-black text-gray-900 mt-2 flex items-center gap-2">
+                      <span>🏆</span> Official Tournament Sponsors
+                    </h2>
                   </div>
-                  <div className="aspect-video bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center p-4 hover:shadow-md transition-shadow">
-                    <p className="font-bold text-gray-400">Sponsor 2</p>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="rounded-2xl border border-amber-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col">
+                    <img src="/sponsors/chief-guest.jpg" alt="Chief Guest" className="w-full h-44 object-cover object-top" />
+                    <div className="p-3 bg-amber-50">
+                      <p className="font-extrabold text-amber-900 text-sm">Sardar Gurdarshan Singh Saini</p>
+                      <span className="text-xs text-amber-700 font-bold uppercase">Chief Guest (BJP, Derabassi)</span>
+                    </div>
                   </div>
-                  <div className="aspect-video bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center p-4 hover:shadow-md transition-shadow">
-                    <p className="font-bold text-gray-400 text-center text-sm">Become a<br/>Sponsor!</p>
+                  <div className="rounded-2xl border border-blue-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col">
+                    <img src="/sponsors/delux-sports.jpg" alt="Delux Sports" className="w-full h-44 object-cover object-top" />
+                    <div className="p-3 bg-blue-50">
+                      <p className="font-extrabold text-blue-900 text-sm">Delux Sports</p>
+                      <span className="text-xs text-blue-700 font-bold uppercase">Sports Hub & Yonex Dealer</span>
+                    </div>
                   </div>
+                  <div className="rounded-2xl border border-emerald-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col">
+                    <img src="/sponsors/sani-dhaba.jpg" alt="Sani Dhaba" className="w-full h-44 object-cover object-top" />
+                    <div className="p-3 bg-emerald-50">
+                      <p className="font-extrabold text-emerald-900 text-sm">Sani Dhaba</p>
+                      <span className="text-xs text-emerald-700 font-bold uppercase">Official Food Partner</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Become a Sponsor banner */}
+                <div className="mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-5 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h3 className="font-extrabold text-lg">Interested in Sponsoring?</h3>
+                    <p className="text-xs text-blue-100">Reach 500+ players & badminton enthusiasts</p>
+                  </div>
+                  <a href="tel:7719524122" className="bg-white text-blue-700 px-5 py-2.5 rounded-full font-bold text-xs shadow-md hover:bg-blue-50 transition-colors shrink-0">
+                    Become a Sponsor →
+                  </a>
                 </div>
               </div>
 
               {/* Vendors Section */}
               <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
-                <h2 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight flex items-center gap-2">
-                  <span className="text-orange-500">🍔</span> Food & Vendors
+                <h2 className="text-2xl font-black text-gray-900 mb-6 uppercase tracking-tight flex items-center gap-2 border-b pb-4">
+                  <span className="text-orange-500">🍔</span> Food, Refreshments & Stalls
                 </h2>
-                <div className="flex flex-col gap-3">
-                  <div className="bg-orange-50 rounded-xl p-4 border border-orange-100 flex justify-between items-center">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-orange-50 rounded-2xl p-5 border border-orange-100 flex items-start gap-3">
+                    <div className="bg-orange-500 text-white p-2.5 rounded-xl shrink-0 font-bold text-lg">🍿</div>
                     <div>
-                      <h4 className="font-bold text-orange-900">Food Stalls Available</h4>
-                      <p className="text-sm text-orange-700">Snacks, Energy Drinks, and Meals</p>
+                      <h4 className="font-bold text-orange-900 text-base">Food Stalls Available</h4>
+                      <p className="text-sm text-orange-700 mt-1">Fresh Snacks, Energy Drinks, Fresh Juices & Meals served on-site throughout the event.</p>
+                    </div>
+                  </div>
+                  <div className="bg-emerald-50 rounded-2xl p-5 border border-emerald-100 flex items-start gap-3">
+                    <div className="bg-emerald-500 text-white p-2.5 rounded-xl shrink-0 font-bold text-lg">🎾</div>
+                    <div>
+                      <h4 className="font-bold text-emerald-900 text-base">Badminton Equipment Desk</h4>
+                      <p className="text-sm text-emerald-700 mt-1">Stringing service, shuttles, grips & court accessories available at venue.</p>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+          )}
 
-              {/* Instagram Feed / Links */}
-              <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-3xl p-6 md:p-8 shadow-sm border border-pink-100 text-center">
-                <h2 className="text-xl font-black text-gray-900 mb-3 uppercase tracking-tight">Follow the Action</h2>
-                <p className="text-gray-600 text-sm mb-6 max-w-md mx-auto">Tag us in your photos and stories using the official tournament hashtag!</p>
-                <div className="inline-block bg-white px-6 py-3 rounded-full font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 shadow-sm border border-pink-100 text-xl tracking-wider">
-                  #SUMMERSMASH26
+          {/* Social Tab Content */}
+          {activeTab === 'Social' && (
+            <div className="flex flex-col gap-6 mt-2">
+              {/* Instagram & Social Media Channels */}
+              <div className="bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 rounded-3xl p-6 md:p-8 shadow-sm border border-pink-100">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Social Hub</span>
+                  <h2 className="text-2xl font-black text-gray-900">Follow & Share</h2>
+                </div>
+                <p className="text-gray-600 text-sm mb-6">Stay connected with live tournament updates, match highlights, player photos, and announcements!</p>
+                
+                {/* Official Hashtag */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-pink-100 text-center mb-6">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Official Tournament Hashtag</p>
+                  <span className="inline-block font-black text-2xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 tracking-wider">
+                    #SUMMERSMASH26
+                  </span>
+                  <p className="text-xs text-gray-500 mt-2">Tag us in your photos & stories to get featured!</p>
+                </div>
+
+                {/* Social Links Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-pink-100 hover:border-pink-300 shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center group">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center text-xl font-bold mb-3 group-hover:scale-110 transition-transform">
+                      📸
+                    </div>
+                    <h4 className="font-extrabold text-gray-900 text-sm">Instagram</h4>
+                    <p className="text-xs text-gray-500 mt-0.5">@shuttler.tournament</p>
+                  </a>
+
+                  <a href="https://wa.me/917719524122" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-emerald-100 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center group">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xl font-bold mb-3 group-hover:scale-110 transition-transform">
+                      💬
+                    </div>
+                    <h4 className="font-extrabold text-gray-900 text-sm">WhatsApp Group</h4>
+                    <p className="text-xs text-gray-500 mt-0.5">Live Draw Updates</p>
+                  </a>
+
+                  <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="bg-white p-5 rounded-2xl border border-red-100 hover:border-red-300 shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center group">
+                    <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center text-xl font-bold mb-3 group-hover:scale-110 transition-transform">
+                      ▶️
+                    </div>
+                    <h4 className="font-extrabold text-gray-900 text-sm">YouTube Live</h4>
+                    <p className="text-xs text-gray-500 mt-0.5">Match Streams</p>
+                  </a>
+                </div>
+              </div>
+
+              {/* Venue Maps Gallery */}
+              <div className="p-6 md:p-8 bg-white rounded-3xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-bold mb-6 text-gray-900 border-b pb-3 flex items-center gap-3">
+                  <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Maps</span>
+                  Venue Directions & Location Guides
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[1, 2, 3, 4].map((num) => (
+                    <div 
+                      key={num} 
+                      onClick={() => setSelectedImage(num)}
+                      className="group relative rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 bg-white border-[6px] border-white aspect-[4/3] cursor-pointer"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#121845]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex items-end p-6">
+                        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex items-center gap-2">
+                          <div className="bg-blue-500 p-2 rounded-full">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                          </div>
+                          <span className="text-white font-bold tracking-wide">
+                            Click to Expand Map {num}
+                          </span>
+                        </div>
+                      </div>
+                      <img 
+                        src={`/map%20pics/map%20${num}.png`} 
+                        alt={`Tournament Map ${num}`} 
+                        className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-in-out" 
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -457,6 +781,38 @@ export default function TournamentPage({ params }: { params: Promise<{ id: strin
           <button onClick={handleRegisterClick} className="block w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-base rounded-full shadow-lg transition-transform hover:-translate-y-1 hover:shadow-xl focus:ring-4 focus:ring-blue-500/50 tracking-wide text-center uppercase">
             REGISTER NOW
           </button>
+
+          {/* Reporting Time Schedule Card (Only on Matches tab) */}
+          {activeTab === 'Matches' && (
+            <div className="bg-white rounded-3xl p-5 shadow-sm border border-blue-100 overflow-hidden">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="bg-blue-100 text-blue-600 p-2 rounded-xl shadow-sm">
+                    <Clock size={18} strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-sm font-extrabold text-gray-900 tracking-wide uppercase">Reporting Schedule</h3>
+                </div>
+                <span className="text-[10px] font-bold bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full border border-blue-100 uppercase tracking-wider">
+                  23 AUGUST
+                </span>
+              </div>
+              <div 
+                className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm cursor-pointer group relative"
+                onClick={() => setReportingLightboxOpen(true)}
+              >
+                <img 
+                  src="/reporting-time.jpg" 
+                  alt="Reporting Time Schedule (23 August)" 
+                  className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300" 
+                />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="bg-white/90 text-gray-900 font-bold text-xs px-3 py-1.5 rounded-full shadow-md backdrop-blur-sm">
+                    🔍 Click to Expand
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {activeTab === 'Overview' && (
             <>

@@ -1,4 +1,7 @@
-import { Trophy, Users, ChevronRight } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Trophy, Users, ChevronRight, ChevronLeft } from "lucide-react";
 import { DynaPuff } from "next/font/google";
 import Link from "next/link";
 import FeaturesSection from "@/components/FeaturesSection";
@@ -8,6 +11,95 @@ import ContactModalButton from "@/components/ContactModalButton";
 import AuthNavButton from "@/components/AuthNavButton";
 
 const bubbleFont = DynaPuff({ subsets: ["latin"], weight: ["700"] });
+
+function HomeSponsorCarousel() {
+  const slides = [
+    { id: 'chief-guest', src: '/sponsors/chief-guest.jpg', title: 'Chief Guest - Sardar Gurdarshan Singh Saini' },
+    { id: 'delux-sports', src: '/sponsors/delux-sports.jpg', title: 'Delux Sports - Premier Badminton Hub' },
+    { id: 'sani-dhaba', src: '/sponsors/sani-dhaba.jpg', title: 'Sani Dhaba - Official Food Partner' },
+    { id: 'prize-pool', src: '/prize-pool.jpg', title: 'Prize Pool Up To ₹70,000' },
+    { id: 'banner', src: '/banner.jpg.jpeg', title: 'Shuttlers Tournament 2026' },
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isPaused, slides.length]);
+
+  const goToPrev = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+  };
+
+  return (
+    <div 
+      className="relative w-full max-w-3xl mx-auto rounded-3xl overflow-hidden shadow-2xl border border-blue-500/30 group bg-slate-950/80 backdrop-blur-md"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Sliding Track */}
+      <div 
+        className="flex transition-transform duration-700 ease-in-out"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
+        {slides.map((slide) => (
+          <div key={slide.id} className="w-full shrink-0 relative flex items-center justify-center bg-black/60 h-[180px] sm:h-[220px]">
+            <img 
+              src={slide.src} 
+              alt={slide.title} 
+              className="w-full h-full object-contain p-2" 
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Slide Badge */}
+      <div className="absolute top-2.5 left-3 bg-black/70 backdrop-blur-md text-blue-300 text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full border border-blue-400/30 tracking-wider uppercase pointer-events-none z-10">
+        {slides[currentIndex].title}
+      </div>
+
+      {/* Controls */}
+      <button
+        onClick={goToPrev}
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-blue-600 text-white p-2 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg border border-white/20 z-10"
+        aria-label="Previous Slide"
+      >
+        <ChevronLeft size={16} />
+      </button>
+
+      <button
+        onClick={goToNext}
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-blue-600 text-white p-2 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg border border-white/20 z-10"
+        aria-label="Next Slide"
+      >
+        <ChevronRight size={16} />
+      </button>
+
+      {/* Dots Indicator */}
+      <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/60 px-3 py-1 rounded-full backdrop-blur-md border border-white/10 z-10">
+        {slides.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              idx === currentIndex ? 'w-5 bg-blue-400 shadow-sm' : 'w-1.5 bg-white/40 hover:bg-white'
+            }`}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const Shuttlecock = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -169,17 +261,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Sponsors Section */}
-      <section className="bg-transparent py-16 px-6 sm:px-12 lg:px-24">
+      {/* Sponsors Section with Compact Sideways Carousel */}
+      <section className="bg-transparent py-14 px-6 sm:px-12 lg:px-24">
         <div className="max-w-5xl mx-auto text-center">
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-8">Trusted by our partners</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-            {/* Dummy Sponsors */}
-            <a href="#" className="text-2xl font-black font-serif italic text-white hover:text-blue-400 transition-colors">Sponsor 1</a>
-            <a href="#" className="text-2xl font-black tracking-tighter text-white hover:text-blue-400 transition-colors">Sponsor 2</a>
-            <a href="#" className="text-2xl font-bold tracking-widest text-white hover:text-blue-400 transition-colors">Sponsor 3</a>
-            <a href="#" className="text-xl font-bold border-2 border-white px-3 py-1 text-white hover:border-blue-400 hover:text-blue-400 transition-colors">Sponsor 4</a>
-          </div>
+          <p className="text-xs font-extrabold text-blue-400/80 uppercase tracking-[0.2em] mb-6">Trusted By Our Partners & Sponsors</p>
+          <HomeSponsorCarousel />
         </div>
       </section>
     </div>
