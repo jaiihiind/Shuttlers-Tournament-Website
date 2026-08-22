@@ -116,12 +116,23 @@ const Shuttlecock = ({ className = "" }: { className?: string }) => (
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0a1128] font-sans text-white">
+      {/* Mobile Top Slogan Banner */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-9 bg-white/10 backdrop-blur-md border-b border-white/10 z-50 flex items-center justify-center gap-2 text-[11px] font-black tracking-[0.15em] uppercase">
+        <span className="text-teal-400 drop-shadow-[0_0_8px_rgba(45,212,191,0.5)]">PLAY</span>
+        <span className="text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">LEARN</span>
+        <span className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]">EARN</span>
+        <span className="text-rose-400 drop-shadow-[0_0_8px_rgba(251,113,133,0.5)] flex items-center">
+          <Shuttlecock className="w-3.5 h-3.5 mr-1 -rotate-12" />
+          REPEAT....
+        </span>
+      </div>
+
       {/* Hero Section */}
       <section className="relative h-[100dvh] w-full flex flex-col justify-center overflow-hidden px-6 sm:px-12 lg:px-24 bg-[url('/img2.jpg')] bg-cover bg-center bg-no-repeat">
 
         
         {/* Floating Pill Navbar */}
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl bg-gradient-to-r from-blue-900/40 via-black/40 to-blue-900/40 backdrop-blur-md rounded-full px-2 py-2 flex justify-between items-center z-40 shadow-2xl border border-white/20">
+        <div className="fixed top-14 md:top-5 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl bg-gradient-to-r from-blue-900/40 via-black/40 to-blue-900/40 backdrop-blur-md rounded-full px-2 py-2 flex justify-between items-center z-40 shadow-2xl border border-white/20">
           
           {/* Left Group: Logo + Navigation Links */}
           <div className="flex items-center gap-6">
