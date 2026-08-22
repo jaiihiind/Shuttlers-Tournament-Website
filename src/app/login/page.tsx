@@ -113,6 +113,20 @@ export default function LoginPage() {
             <div className="absolute inset-0 border border-blue-500/20 rounded-3xl pointer-events-none group-hover:border-blue-500/40 transition-colors duration-500" />
           
           <div className="text-center mb-6">
+            <div className="mb-5 bg-white/5 backdrop-blur-md border border-white/10 rounded-full py-1.5 px-3 flex items-center justify-center gap-1.5 text-[9px] font-black tracking-[0.15em] uppercase mx-auto max-w-[280px]">
+              <span className="text-teal-400 drop-shadow-[0_0_8px_rgba(45,212,191,0.5)]">PLAY</span>
+              <span className="text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">LEARN</span>
+              <span className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]">EARN</span>
+              <span className="text-rose-400 drop-shadow-[0_0_8px_rgba(251,113,133,0.5)] flex items-center">
+                <svg className="w-3 h-3 mr-0.5 -rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 12a2 2 0 1 0-4 0 2 2 0 0 0 4 0z" />
+                  <path d="M18 12L4 5c-1 0-2 2-2 7s1 7 2 7l14-7z" />
+                  <path d="M10 8l-4 8" />
+                  <path d="M10 16l-4-8" />
+                </svg>
+                REPEAT....
+              </span>
+            </div>
             <div className="w-12 h-12 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-xl shadow-blue-500/20 rotate-6">
               {/* Custom Logo/Icon */}
               <img src="/logo1.jpg" alt="Logo" className="w-full h-full object-cover rounded-2xl -rotate-6" />
